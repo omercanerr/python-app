@@ -13,22 +13,17 @@ stages {
       }
     }
    stage('Sonarqube') {
-    steps {
-        withSonarQubeEnv('sonar') {
-            sh '''${scannerHome}/sonar-scanner-5.0.1.3006/bin/sonar-scanner \
-            -Dsonar.sources=${WORKSPACE} \
-            -Dsonar.projectBaseDir=${WORKSPACE} \
-            -Dsonar.projectKey=${SONARPROJECTKEY} \
-            -Dsonar.projectName=${SONARPROJECTKEY} \
-            -Dsonar.sourceEncoding=UTF-8 \
-            -Dsonar.working.directory=${WORKSPACE}/sonar \
-            -X
-            '''
-        }
-//         timeout(time: 1, unit: 'HOURS') {
-//           waitForQualityGate abortPipeline: true,
-//           credentialsId: 'sonartoken'
-//         }
+node {
+  stage('SCM') {
+    checkout scm
+  }
+  stage('SonarQube Analysis') {
+    def scannerHome = tool 'SonarScanner';
+    withSonarQubeEnv() {
+      sh "${scannerHome}/bin/sonar-scanner"
+    }
+  }
+}
     }
 }
     stage('Building image') {
