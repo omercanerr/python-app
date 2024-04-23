@@ -12,7 +12,7 @@ pipeline {
         stage('Cloning git') {
             steps {
                 script {
-                    checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/omercanerr/python-app.git']])
+                    git branch: 'main', url: 'https://github.com/omercanerr/python-app.git'
                 }
             }
         }
@@ -28,7 +28,8 @@ pipeline {
         stage ('Pushing to DockerHub') {
             steps {
                 script {
-                    docker.withRegistry('', 'dockerhub_credentials') {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub_credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
                         sh "${DOCKER_BINARY} push ${REPOSITORY_URI}"
                     }
                 }
