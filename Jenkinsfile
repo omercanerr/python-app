@@ -27,20 +27,20 @@ pipeline {
             }
         }
         
-        stage ('Running SonarQube analysis') {
-            steps {
-                script {
-                    withSonarQubeEnv('sonar') {
-                        sh "sonarqube \
-                            -Dsonar.projectKey=test \
-                            -Dsonar.sources=. \
-                            -Dsonar.host.url=${SONARQUBE_URL} \
-                            -Dsonar.login=${SONARQUBE_LOGIN}"
-                    }
-                }
-            }
+        stage('SCM') {
+            checkout scm
         }
-
+        stage('SonarQube Analysis') {
+          def scannerHome = tool 'SonarScanner';
+          withSonarQubeEnv() {  
+            sh "${scannerHome}/bin/sonar-scanner"
+          }
+       }
+    }
+    
+              
+              
+        
         stage ('Pushing to DockerHub') {
             steps {
                 script {
