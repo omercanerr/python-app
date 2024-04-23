@@ -14,9 +14,6 @@ stages {
       }
     }
    stage('Sonarqube') {
-    tools {
-        jdk "jdk11" // the name you have given the JDK installation using the JDK manager (Global Tool Configuration)
-    }
     steps {
         withSonarQubeEnv('sonar') {
             sh '''${scannerHome}/sonar-scanner-5.0.1.3006/bin/sonar-scanner \
