@@ -3,14 +3,13 @@ pipeline {
     environment {
         APP_NAME = "${APP_NAME}"
         NAMESPACE = "${NAMESPACE}"
-        BRANCH= "${BRANCH}"
         KUBECONFIGID= "${KUBECONFIGID}"
     }
 options { timestamps () }
 stages { 
     stage('Cloning Git') {
       steps {
-        git([url: 'git@github.com:omercanerr/python-app.git', branch:'${BRANCH}', credentialsId: 'githubdeploy'])
+        git([url: 'https://github.com/omercanerr/python-app.git', branch:'main'])
       }
     }
    stage('Sonarqube') {
