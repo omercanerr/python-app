@@ -1,56 +1,40 @@
 pipeline {
-  agent any
+    agent any
     environment {
-        APP_NAME = "${APP_NAME}"
-        NAMESPACE = "${NAMESPACE}"
-        KUBECONFIGID= "${KUBECONFIGID}"
+        AWS_ACCOUNT_ID="****************"
+        AWS_DEFAULT_REGION="US-EAST-2"
+        IMAGE_REPO_NAME="cipipeline"
+        IMAGE_TAG="latest"
+        REPOSITORY_URI= "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
     }
-options { timestamps () }
-stages { 
-    stage('Cloning Git') {
-      steps {
-        git([url: 'https://github.com/omercanerr/python-app.git', branch:'main'])
-      }
-    }
-   stage('Sonarqube') {
-node {
-  stage('SCM') {
-    checkout scm
-  }
-  stage('SonarQube Analysis') {
-    def scannerHome = tool 'SonarScanner';
-    withSonarQubeEnv() {
-      sh "${scannerHome}/bin/sonar-scanner"
-    }
-  }
-}
-    }
-}
-    stage('Building image') {
-      steps{
-        script {
-            dockerImage = docker.build("${APP_NAME}-${NAMESPACE}:${env.BUILD_ID}", "--no-cache -f Dockerfile .")    
-        }
-      }
-    }
-    stage('Pushing Image') {
-      steps{
-        script {
-          docker.withRegistry( 'http://172.31.211.70:8083/docker/', 'docker-credentials' ) {
-            dockerImage.push("${env.BUILD_ID}")
-          }
-        }
-      }
-    }
-    stage('Clean Up') {
-        steps {
-            script {
-                try{
-                    sh 'docker image rm ${APP_NAME}-${NAMESPACE}:${BUILD_ID}'
-                    sh 'docker image rm 172.31.211.70:8083/${APP_NAME}-${NAMESPACE}:${BUILD_ID}'
+
+    stages {
+       
+        stage('Cloning git') {
+            steps {
+                script {
+                    checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/omercanerr/python-app.git']])
                 }
-                catch(err){}
             }
         }
+        
+        stage ('Building Image') {
+            steps {
+                script {
+                    dockerImage = docker.build "${IMAGE_REPO_NAME}:${IMAGE_TAG}"
+                }
+            }
+        }
+        stage ('Pushing to DockerHub') {
+            steps {
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/omercaner/python-app', 'dockerhub_credentials') {
+                    dockerImage.push("${IMAGE_REPO_NAME}:${IMAGE_TAG}")
+                    }
+                }
+            }
+        }
+        
     }
+
 }
