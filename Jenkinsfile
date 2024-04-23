@@ -1,11 +1,9 @@
 pipeline {
     agent any
     environment {
-        AWS_ACCOUNT_ID="****************"
-        AWS_DEFAULT_REGION="US-EAST-2"
-        IMAGE_REPO_NAME="cipipeline"
-        IMAGE_TAG="latest"
-        REPOSITORY_URI= "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
+        IMAGE_TAG = "latest"
+        IMAGE_REPO_NAME = "omercaner/python-app"
+        REPOSITORY_URI = "docker.io/${IMAGE_REPO_NAME}:${IMAGE_TAG}"
     }
 
     stages {
@@ -21,20 +19,19 @@ pipeline {
         stage ('Building Image') {
             steps {
                 script {
-                    dockerImage = docker.build "${IMAGE_REPO_NAME}:${IMAGE_TAG}"
+                    dockerImage = docker.build "${REPOSITORY_URI}"
                 }
             }
         }
         stage ('Pushing to DockerHub') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/omercaner/python-app', 'dockerhub_credentials') {
-                    dockerImage.push("${IMAGE_REPO_NAME}:${IMAGE_TAG}")
+                    docker.withRegistry('', 'dockerhub_credentials') {
+                        dockerImage.push("${IMAGE_TAG}")
                     }
                 }
             }
         }
         
     }
-
 }
