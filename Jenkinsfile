@@ -6,7 +6,7 @@ pipeline {
         REPOSITORY_URI = "docker.io/${IMAGE_REPO_NAME}:${IMAGE_TAG}"
         DOCKER_BINARY = "/usr/bin/docker"
         SONARQUBE_URL = "http://192.168.0.35:9000"
-        SONARQUBE_LOGIN = "squ_4411a8199f2c3048e6b0f1f0ba50f27b2f972cd0"
+        SONARQUBE_LOGIN = "jenkins"
     }
 
     stages {
@@ -27,17 +27,18 @@ pipeline {
             }
         }
         
-        stage('SCM') {
-            checkout scm
-        }
-        stage('SonarQube Analysis') {
-          def scannerHome = tool 'SonarScanner';
-          withSonarQubeEnv() {  
-            sh "${scannerHome}/bin/sonar-scanner"
-          }
-       }
-    }
-    
+        stage ('Running SonarQube analysis') {
+            steps {
+                script {
+                    withSonarQubeEnv('sonar') {
+                        sh "sonarqube \
+                            -Dsonar.projectKey=python \
+                            -Dsonar.sources=. \
+                            -Dsonar.host.url=${SONARQUBE_URL} \
+                            -Dsonar.login=${SONARQUBE_LOGIN}"
+                    }
+                }
+            }  
               
               
         
