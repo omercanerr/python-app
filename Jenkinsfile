@@ -30,18 +30,17 @@ pipeline {
         stage ('Running SonarQube analysis') {
             steps {
                 script {
-                    withSonarQubeEnv('sonar') {
-                        sh "sonarqube \
-                            -Dsonar.projectKey=python \
+                    withSonarQubeEnv('sonarqube') {
+                        sh "sonar-scanner \
+                            -Dsonar.projectKey=my_project_key \
                             -Dsonar.sources=. \
                             -Dsonar.host.url=${SONARQUBE_URL} \
                             -Dsonar.login=${SONARQUBE_LOGIN}"
                     }
                 }
-            }  
-              
-              
-        
+            }
+        }
+
         stage ('Pushing to DockerHub') {
             steps {
                 script {
