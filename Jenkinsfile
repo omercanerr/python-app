@@ -6,7 +6,7 @@ pipeline {
         REPOSITORY_URI = "docker.io/${IMAGE_REPO_NAME}:${IMAGE_TAG}"
         DOCKER_BINARY = "/usr/bin/docker"
         SONARQUBE_URL = "http://192.168.0.37:9000"
-        SONARQUBE_LOGIN = "jenkins"
+        SONARQUBE_LOGIN = "sonarqube"
     }
 
     stages {
@@ -32,7 +32,7 @@ pipeline {
                 script {
                     withSonarQubeEnv('sonarqube') {
                         sh "sonar-scanner \
-                            -Dsonar.projectKey=my_project_key \
+                            -Dsonar.projectKey=python \
                             -Dsonar.sources=. \
                             -Dsonar.host.url=${SONARQUBE_URL} \
                             -Dsonar.login=${SONARQUBE_LOGIN}"
