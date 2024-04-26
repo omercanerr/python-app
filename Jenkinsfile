@@ -5,8 +5,6 @@ pipeline {
         IMAGE_REPO_NAME = "omercaner/python-app"
         REPOSITORY_URI = "docker.io/${IMAGE_REPO_NAME}:${IMAGE_TAG}"
         DOCKER_BINARY = "/usr/bin/docker"
-        SONARQUBE_URL = "http://192.168.0.37:9000"
-        SONARQUBE_LOGIN = "sonarqube"
     }
 
     stages {
@@ -27,20 +25,6 @@ pipeline {
             }
         }
         
-        stage ('Running SonarQube analysis') {
-            steps {
-                script {
-                    withSonarQubeEnv('sonarqube') {
-                        sh "/usr/local/bin/sonar-scanner \
-                            -Dsonar.projectKey=python \
-                            -Dsonar.sources=. \
-                            -Dsonar.host.url=${SONARQUBE_URL} \
-                            -Dsonar.login=${SONARQUBE_LOGIN}"
-                    }
-                }
-            }
-        }
-
         stage ('Pushing to DockerHub') {
             steps {
                 script {
