@@ -85,6 +85,11 @@ curl -L https://github.com/kubernetes/kompose/releases/download/v1.26.0/kompose-
 
 snap install kompose
 
+# Argocd installation
+
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
 # Prometheous
 
 kubectl create namespace monitoring
