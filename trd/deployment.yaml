@@ -30,8 +30,7 @@ spec:
       serviceAccountName: ""
       volumes:
       - name: web-claim0
-        persistentVolumeClaim:
-          claimName: web-claim0
+        emptyDir: {} # PVC kaldırıldığı için, bir emptyDir kullanıyoruz
 status: {}
 ---
 apiVersion: v1
