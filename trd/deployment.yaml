@@ -23,14 +23,8 @@ spec:
         ports:
         - containerPort: 5000
         resources: {}
-        volumeMounts:
-        - mountPath: /app
-          name: web-claim0
       restartPolicy: Always
       serviceAccountName: ""
-      volumes:
-      - name: web-claim0
-        emptyDir: {} # PVC kaldırıldığı için, bir emptyDir kullanıyoruz
 status: {}
 ---
 apiVersion: v1
