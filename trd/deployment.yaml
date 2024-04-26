@@ -1,11 +1,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: test
   labels:
     io.kompose.service: web
   name: web
 spec:
   replicas: 3
+
   selector:
     matchLabels:
       io.kompose.service: web
@@ -30,6 +32,7 @@ status: {}
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: test
   labels:
     io.kompose.service: web
   name: web
